@@ -7,14 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 @SpringBootApplication
 public class StudentManagementApplication {
 
+	private String name = "Enami Kouji";
+
 	public static void main(String[] args) {
 
 		SpringApplication.run(StudentManagementApplication.class, args);
 	}
 
-	@GetMapping("/hello")
-	public String hello(){
-		return "Hello, World";
+	@GetMapping("/name")
+	public String getName() {
+		return name;
 	}
 
 }
