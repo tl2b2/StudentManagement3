@@ -3,10 +3,7 @@ package raisetech.StudentManagement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @SpringBootApplication
 @RestController
@@ -14,9 +11,6 @@ public class StudentManagementApplication {
 
 	@Autowired
 	private StudentRepository repository;
-
-	private String name = "Enami Kouji";
-	private String age = "37";
 
 	public static void main(String[] args) {
 
@@ -33,8 +27,13 @@ public class StudentManagementApplication {
 	public void registerStudent(String name, int age){
 		repository.registerStudent(name, age);
 	}
-	@PostMapping("/studentName")
-	public void updateStudentName(String name){
-		this.name = name;
+	@PatchMapping("/student")
+	public void updateStudentName(String name, int age){
+		repository.updateStudent(name,age);
+	}
+
+	@DeleteMapping("/student")
+	public void deleteStudent(String name){
+		repository.deleteStudent(name);
 	}
 }
