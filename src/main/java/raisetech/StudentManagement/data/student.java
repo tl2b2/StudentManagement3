@@ -1,5 +1,10 @@
-package raisetech.StudentManagement;
+package raisetech.StudentManagement.data;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class student {
     private String id;
     private String name;
