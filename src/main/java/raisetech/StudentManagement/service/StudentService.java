@@ -20,8 +20,13 @@ public class StudentService {
 
     public List<student> searchStudentList() {
         return repository.search();
+
+        //年齢30代の人のみを抽出する
+
     }
     public List<StudentsCourses> searchStudentsCourseList(){
         return repository.searchStudentsCourses();
+
     }
+    //
 }
