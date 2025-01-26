@@ -22,4 +22,5 @@ public interface StudentRepository {
 
     @Select("SELECT * FROM student_couses")
     List<StudentsCourses> searchStudentsCourses();
+
 }

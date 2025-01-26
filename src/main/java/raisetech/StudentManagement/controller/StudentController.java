@@ -2,6 +2,8 @@ package raisetech.StudentManagement.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -53,5 +55,40 @@ public class StudentController {
     public List<StudentsCourses> getStudentsCourseList(){
         return service.searchStudentsCourseList();
     }
+
+    @GetMapping("/studentList30s")
+    public List<StudentDetail> getStudentList30s(){
+        List<student> students = service.searchStudentList();
+        List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
+
+        List<student> students30Plus = students.stream()
+                .filter(student -> student.getAge() >= 30) // 年齢が30以上の学生をフィルタリング
+                .collect(Collectors.toList());
+        List<StudentDetail> studentDetails = convertStudentDetails(students30Plus, studentsCourses);
+        return studentDetails;
+    }
+
+    @GetMapping("/studentCourseListJava")
+    public List<StudentDetail> getStudentListJava(){
+        List<student> students = service.searchStudentList();
+        List<StudentsCourses> studentCourses =service.searchStudentsCourseList();
+
+        List<StudentsCourses> student_couses = studentCourses.stream()
+            .filter(StudentsCourses -> "JAVA".equals(StudentsCourses.getCourseName()))
+            .collect(Collectors.toList());
+
+        List<StudentDetail> studentDetails = convertStudentDetails (students,student_couses);
+        return studentDetails;
+        }
+
+    /*@GetMapping("/newStudent")
+    public String newStudent (Model model){
+
+    }
+
+    @PostMapping("/registerStudent")
+    public String registerStudent(@ModelAttribute StudentDetail studentDetail){
+        return "";
+    }*/
 
 }
