@@ -3,6 +3,7 @@ package raisetech.StudentManagement.data;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 public class student {
@@ -14,6 +15,6 @@ public class student {
     private String area;
     private int age;
     private String sex;
-    //private String remark;
-    //private boolean isDeleted;
+    private String remark;
+    private boolean isDeleted;
 }
