@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.data.student;
+import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class StudentService {
         this.repository = repository;
     }
 
-    public List<student> searchStudentList() {
+    public List<Student> searchStudentList() {
         return repository.search();
     }
     public List<StudentsCourses> searchStudentsCourseList(){
@@ -31,34 +32,42 @@ public class StudentService {
     }
 
     private List<StudentDetail> convertStudentDetails(
-            List<raisetech.StudentManagement.data.student> students30Plus, List<StudentsCourses> studentsCourses) {
+            List<Student> students30Pluses, List<StudentsCourses> studentsCourses) {
         return new ArrayList<>();
     }
 
     @Transactional
     public void registerStudent(StudentDetail studentDetail) {
         repository.registerStudent(studentDetail.getStudent());
+
+        for (StudentsCourses studentsCourse : studentDetail.getStudentsCourses()) {
+             studentsCourse.setStudentId(studentDetail.getStudent().getId());
+             studentsCourse.setCourseStartAt(LocalDateTime.now());
+             studentsCourse.setCourseEndAt(LocalDateTime.now().plusYears(1));
+             repository.registerStudentsCourses(studentsCourse);
+        }
+
     }
 
     public List<StudentDetail> getStudentList30s(){
-        List<student> students = searchStudentList();
+        List<Student> Students = searchStudentList();
         List<StudentsCourses> studentsCourses = searchStudentsCourseList();
 
-        List<student> students30Plus = students.stream()
+        List<Student> students30Pluses = Students.stream()
                 .filter(student -> student.getAge() >= 30)
                 .collect(Collectors.toList());
-        return convertStudentDetails(students30Plus, studentsCourses);
+        return convertStudentDetails(students30Pluses, studentsCourses);
     }
 
       public List<StudentDetail> getStudentListJava(){
-        List<student> students = searchStudentList();
+        List<Student> Students = searchStudentList();
         List<StudentsCourses> studentCourses =searchStudentsCourseList();
 
         List<StudentsCourses> student_couses = studentCourses.stream()
             .filter(StudentsCourses -> "JAVA".equals(StudentsCourses.getCourseName()))
             .collect(Collectors.toList());
 
-        List<StudentDetail> studentDetails = convertStudentDetails (students,student_couses);
+        List<StudentDetail> studentDetails = convertStudentDetails (Students,student_couses);
         return studentDetails;
         }
 }

@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.data.student;
+import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -30,9 +30,9 @@ public class StudentController {
 
     @GetMapping("/studentList")
     public String getStudentList(Model model){
-            List<student> students = service.searchStudentList();
+            List<Student> Students = service.searchStudentList();
         List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
-                model.addAttribute("studentList", converter.convertStudentDetails(students,studentsCourses));
+                model.addAttribute("studentList", converter.convertStudentDetails(Students,studentsCourses));
         return "studentList";
     }
 
@@ -43,7 +43,9 @@ public class StudentController {
 
     @GetMapping("/newStudent")
     public String newStudent(Model model) {
-        model.addAttribute("studentDetail", new StudentDetail());
+        StudentDetail studentDetail = new StudentDetail();
+        studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
+        model.addAttribute("studentDetail", studentDetail);
         return "registerStudent";
     }
 

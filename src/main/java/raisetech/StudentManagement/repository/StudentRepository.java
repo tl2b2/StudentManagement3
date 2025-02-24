@@ -2,7 +2,7 @@ package raisetech.StudentManagement.repository;
 
 import org.apache.ibatis.annotations.*;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.data.student;
+import raisetech.StudentManagement.data.Student;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface StudentRepository {
      * @return　全件検索した、受講生一覧
      */
     @Select("SELECT * FROM students")
-    List<student> search();
+    List<Student> search();
 
     @Select("SELECT * FROM student_couses")
     List<StudentsCourses> searchStudentsCourses();
@@ -26,5 +26,10 @@ public interface StudentRepository {
     @Insert("INSERT INTO students(name, kana_name, nickname, email, area, age, sex, remark, isDeleted)"
             + "VALUES(#{name}, #{kanaName}, #{nickname}, #{email}, #{area}, #{age}, #{sex}, #{remark}, false)")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    void registerStudent(student student);
+    void registerStudent(Student student);
+
+    @Insert("INSERT INTO student_couses(student_id, course_name, course_start_at, course_end_at)"
+            + "VALUES(#{student_id}, #{course_name}, #{course_start_at}, #{course_end_at})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void registerStudentsCourses(StudentsCourses studentsCourses);
 }
