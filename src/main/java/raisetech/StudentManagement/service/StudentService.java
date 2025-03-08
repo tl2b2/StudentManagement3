@@ -70,4 +70,5 @@ public class StudentService {
         List<StudentDetail> studentDetails = convertStudentDetails (Students,student_couses);
         return studentDetails;
         }
+        //コミット用コメントすぐ消す
 }
