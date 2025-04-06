@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -13,6 +14,7 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,10 +38,10 @@ public class StudentController {
         return "studentList";
     }
 
-    @GetMapping("/studentCourseList")
+    /*@GetMapping("/studentCourseList")
     public List<StudentsCourses> getStudentsCourseList(){
         return service.searchStudentsCourseList();
-    }
+    }*/
 
     @GetMapping("/newStudent")
     public String newStudent(Model model) {
@@ -49,6 +51,27 @@ public class StudentController {
         return "registerStudent";
     }
 
+    /*@GetMapping("/student/{id}")
+    public String getStudent(@PathVariable String id, Model model) {
+        StudentDetail studentDetail = service.searchStudent(id);
+        model.addAttribute("studentDetail", studentDetail);
+        return "updateStudent";
+    }*/
+    @GetMapping("/student/{id}")
+    public String getStudent(@PathVariable String id, Model model) {
+        StudentDetail studentDetail = service.searchStudent(id);
+        if (studentDetail == null || studentDetail.getStudentsCourses() == null) {
+            model.addAttribute("studentsCourses", new ArrayList<>()); // 空のリストを設定
+        } else {
+            model.addAttribute("studentsCourses", studentDetail.getStudentsCourses());
+        }
+        model.addAttribute("studentDetail", studentDetail);
+        return "updateStudent"; // "updateStudent" テンプレートに遷移
+    }
+
+
+
+
     @PostMapping("/registerStudent")
     public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result){
        if(result.hasErrors()){
@@ -57,4 +80,14 @@ public class StudentController {
        service.registerStudent(studentDetail);
         return "redirect:/studentList";
     }
+
+    @PostMapping("/updateStudent")
+    public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result){
+        if(result.hasErrors()){
+            return "updateStudent";
+        }
+        service.updateStudent(studentDetail);
+        return "redirect:/studentList";
+    }
+
 }
