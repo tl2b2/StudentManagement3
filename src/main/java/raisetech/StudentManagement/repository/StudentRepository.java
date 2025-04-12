@@ -13,15 +13,18 @@ import java.util.List;
 @Mapper
 public interface StudentRepository {
 
-    /**
-     * 全件検索
-     * @return　全件検索した、受講生一覧
-     */
-    @Select("SELECT * FROM students")
+
+    @Select("SELECT * FROM students WHERE isDeleted = false")
     List<Student> search();
 
+    @Select("SELECT * FROM students WHERE id = #{id}")
+    Student searchStudent(String id);
+
     @Select("SELECT * FROM student_couses")
-    List<StudentsCourses> searchStudentsCourses();
+    List<StudentsCourses> searchStudentsCoursesList();
+
+    @Select("SELECT * FROM student_couses WHERE student_id = #{studentId}")
+    List<StudentsCourses> searchStudentsCourses(String studentId);
 
     @Insert("INSERT INTO students(name, kana_name, nickname, email, area, age, sex, remark, isDeleted)"
             + "VALUES(#{name}, #{kanaName}, #{nickname}, #{email}, #{area}, #{age}, #{sex}, #{remark}, false)")
@@ -29,7 +32,15 @@ public interface StudentRepository {
     void registerStudent(Student student);
 
     @Insert("INSERT INTO student_couses(student_id, course_name, course_start_at, course_end_at)"
-            + "VALUES(#{student_id}, #{course_name}, #{course_start_at}, #{course_end_at})")
+            + "VALUES(#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void registerStudentsCourses(StudentsCourses studentsCourses);
+
+    @Update("UPDATE students SET name = #{name}, kana_name = #{kanaName}, nickname = #{nickname}, "
+          + "email = #{email}, area = #{area}, age = #{age}, sex = #{sex}, remark = #{remark}, isDeleted = #{isDeleted} WHERE id = #{id}")
+    void updateStudent(Student student);
+
+    @Update("UPDATE student_couses SET course_name = #{courseName} WHERE id = #{id}")
+    void updateStudentsCourses(StudentsCourses studentsCourses);
+
 }
