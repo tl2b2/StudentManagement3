@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.*;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -28,12 +29,14 @@ public class StudentController {
         this.converter = converter;
     }
 
+    /**
+     * 受講生一覧
+     *
+     * @return　受講生一覧（全件）
+     */
     @GetMapping("/studentList")
     public List<StudentDetail> getStudentList(){
-            List<Student> students = service.searchStudentList();
-        List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
-
-        return converter.convertStudentDetails(students, studentsCourses);
+        return service.searchStudentList();
     }
 
     @GetMapping("/newStudent")
@@ -44,19 +47,24 @@ public class StudentController {
         return "registerStudent";
     }
 
+    /**
+     * 受講生検索
+     * IDに紐づいた受講生の情報を取得できる
+     *
+     * @param id　受講生ID
+     * @return　受講生情報
+     */
     @GetMapping("/student/{id}")
     public StudentDetail getStudent(@PathVariable String id) {
         return service.searchStudent(id);
     }
 
     @PostMapping("/registerStudent")
-    public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result){
-       if(result.hasErrors()){
-           return "registerStudent";
+    public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail){
+        StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
+        return ResponseEntity.ok(responseStudentDetail);
        }
-       service.registerStudent(studentDetail);
-        return "redirect:/studentList";
-    }
+
 
     @PostMapping("/updateStudent")
     public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail){

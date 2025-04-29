@@ -3,6 +3,7 @@ package raisetech.StudentManagement.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domain.StudentDetail;
@@ -13,31 +14,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 受講生情報を取り扱うサービスクラス
+ * 受講生の検索、登録・更新処理を行う
+ */
 @Service
 public class StudentService {
 
     private StudentRepository repository;
     private StudentDetail student;
+    private StudentConverter converter;
 
     @Autowired
-    public StudentService(StudentRepository repository){
+    public StudentService(StudentRepository repository, StudentConverter converter){
         this.repository = repository;
+        this.converter = converter;
     }
 
-    public List<Student> searchStudentList() {
-        return repository.search();
+    /**
+     * 受講生一覧
+     *
+     * @return　受講生一覧（全件）
+     */
+    public List<StudentDetail> searchStudentList() {
+        List<Student> studentList = repository.search();
+        List<StudentsCourses> studentsCoursesList = repository.searchStudentsCoursesList();
+        return converter.convertStudentDetails(studentList, studentsCoursesList);
     }
     public List<StudentsCourses> searchStudentsCourseList(){
         return repository.searchStudentsCoursesList();
     }
 
+    /**
+     * 受講生検索
+     * IDに紐づいた受講生の情報を取得できる。その受講生に紐づいた受講生コース情報も取得し、検索する
+     * @param id　受講生ID
+     * @return　受講生
+     */
     public StudentDetail searchStudent(String id){
         Student student = repository.searchStudent(id);
         List<StudentsCourses> studentsCourses = repository.searchStudentsCourses(student.getId());
-        StudentDetail studentDetail = new StudentDetail();
-        studentDetail.setStudent(student);
-        studentDetail.setStudentsCourses(studentsCourses);
-        return studentDetail;
+        return new StudentDetail(student, studentsCourses);
     }
 
     private List<StudentDetail> convertStudentDetails(
@@ -46,7 +63,7 @@ public class StudentService {
     }
 
     @Transactional
-    public void registerStudent(StudentDetail studentDetail) {
+    public StudentDetail registerStudent(StudentDetail studentDetail) {
         repository.registerStudent(studentDetail.getStudent());
 
         for (StudentsCourses studentsCourse : studentDetail.getStudentsCourses()) {
@@ -56,6 +73,7 @@ public class StudentService {
              repository.registerStudentsCourses(studentsCourse);
         }
 
+        return studentDetail;
     }
 
     @Transactional
@@ -66,29 +84,5 @@ public class StudentService {
             studentsCourse.setStudentId(studentDetail.getStudent().getId());
             repository.updateStudentsCourses(studentsCourse);
         }
-
     }
-
-    public List<StudentDetail> getStudentList30s(){
-        List<Student> Students = searchStudentList();
-        List<StudentsCourses> studentsCourses = searchStudentsCourseList();
-
-        List<Student> students30Pluses = Students.stream()
-                .filter(student -> student.getAge() >= 30)
-                .collect(Collectors.toList());
-        return convertStudentDetails(students30Pluses, studentsCourses);
-    }
-
-      public List<StudentDetail> getStudentListJava(){
-        List<Student> Students = searchStudentList();
-        List<StudentsCourses> studentCourses =searchStudentsCourseList();
-
-        List<StudentsCourses> student_couses = studentCourses.stream()
-            .filter(StudentsCourses -> "JAVA".equals(StudentsCourses.getCourseName()))
-            .collect(Collectors.toList());
-
-        List<StudentDetail> studentDetails = convertStudentDetails (Students,student_couses);
-        return studentDetails;
-        }
-        //コミット用コメントすぐ消す
 }
