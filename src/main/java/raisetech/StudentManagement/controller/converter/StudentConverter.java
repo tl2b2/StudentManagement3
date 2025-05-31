@@ -1,7 +1,7 @@
 package raisetech.StudentManagement.controller.converter;
 
 import org.springframework.stereotype.Component;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 
 import raisetech.StudentManagement.data.Student;
@@ -16,21 +16,21 @@ public class StudentConverter {
     /**
      * 受講生に紐づく受講生コース情報のマッピング
      * 受講生コース情報が複数存在するため、ループさせて組み上げる
-     * @param Students 受講生一覧
-     * @param studentsCourses　受講生コース情報のリスト
+     * @param studentList 受講生一覧
+     * @param studentCourseList　受講生コース情報のリスト
      * @return　受講生詳細情報のリスト
      */
-    public List<StudentDetail> convertStudentDetails(List<Student> Students,
-        List<StudentsCourses> studentsCourses) {
+    public List<StudentDetail> convertStudentDetails(List<Student> studentList,
+        List<StudentCourse> studentCourseList) {
         List<StudentDetail> studentDetails = new ArrayList<>();
-        Students.forEach(student -> {
+        studentList.forEach(student -> {
             StudentDetail studentDetail = new StudentDetail();
             studentDetail.setStudent(student);
 
-            List<StudentsCourses> convertStudentCourses = studentsCourses.stream()
-                    .filter(studentCourses -> student.getId().equals(studentCourses.getStudentId()))
+            List<StudentCourse> convertStudentCourseList = studentCourseList.stream()
+                    .filter(studentCourse -> student.getId().equals(studentCourse.getStudentId()))
                     .collect(Collectors.toList());
-            studentDetail.setStudentsCourses(convertStudentCourses);
+            studentDetail.setStudentCourseList(convertStudentCourseList);
             studentDetails.add(studentDetail);
         });
         return studentDetails;
