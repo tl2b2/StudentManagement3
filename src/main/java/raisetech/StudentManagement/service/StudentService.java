@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
@@ -12,7 +12,6 @@ import raisetech.StudentManagement.repository.StudentRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 受講生情報を取り扱うサービスクラス
@@ -38,11 +37,11 @@ public class StudentService {
      */
     public List<StudentDetail> searchStudentList() {
         List<Student> studentList = repository.search();
-        List<StudentsCourses> studentsCoursesList = repository.searchStudentsCoursesList();
-        return converter.convertStudentDetails(studentList, studentsCoursesList);
+        List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+        return converter.convertStudentDetails(studentList, studentCourseList);
     }
-    public List<StudentsCourses> searchStudentsCourseList(){
-        return repository.searchStudentsCoursesList();
+    public List<StudentCourse> searchStudentsCourseList(){
+        return repository.searchStudentCourseList();
     }
 
     /**
@@ -53,36 +52,59 @@ public class StudentService {
      */
     public StudentDetail searchStudent(String id){
         Student student = repository.searchStudent(id);
-        List<StudentsCourses> studentsCourses = repository.searchStudentsCourses(student.getId());
-        return new StudentDetail(student, studentsCourses);
+        List<StudentCourse> studentCourse = repository.searchStudentsCourses(student.getId());
+        return new StudentDetail(student, studentCourse);
     }
 
     private List<StudentDetail> convertStudentDetails(
-            List<Student> students30Pluses, List<StudentsCourses> studentsCourses) {
+            List<Student> students30Pluses, List<StudentCourse> studentsCourses) {
         return new ArrayList<>();
     }
 
+    /**
+     * 受講生詳細の登録、受講生とコース情報は個別に登録される
+     * コース情報と受講生情報を紐づけるコースID
+     * @param studentDetail　受講生詳細
+     * @return　登録情報を付与した受講生詳細
+     */
     @Transactional
     public StudentDetail registerStudent(StudentDetail studentDetail) {
-        repository.registerStudent(studentDetail.getStudent());
+        Student student = studentDetail.getStudent();
 
-        for (StudentsCourses studentsCourse : studentDetail.getStudentsCourses()) {
-             studentsCourse.setStudentId(studentDetail.getStudent().getId());
-             studentsCourse.setCourseStartAt(LocalDateTime.now());
-             studentsCourse.setCourseEndAt(LocalDateTime.now().plusYears(1));
-             repository.registerStudentsCourses(studentsCourse);
-        }
+        repository.registerStudent(student);
+        studentDetail.getStudentCourseList().forEach(studentCourse -> {
+            initStudentsCourse(studentCourse, student);
+            repository.registerStudentCourse(studentCourse);
+        });
 
         return studentDetail;
     }
 
+    /**
+     * 受講生コース情報登録の際の初期情報
+     * @param studentCourse　受講生コース情報
+     * @param student　受講生
+     */
+    private void initStudentsCourse(StudentCourse studentCourse, Student student) {
+        LocalDateTime now = LocalDateTime.now();
+
+        studentCourse.setStudentId(student.getId());
+        studentCourse.setCourseStartAt(now);
+        studentCourse.setCourseEndAt(now.plusYears(1));
+    }
+
+    /**
+     * 受講生詳細の更新
+     * 受講生情報、コース情報の更新
+     * @param studentDetail　受講生詳細
+     */
     @Transactional
     public void updateStudent(StudentDetail studentDetail) {
         repository.updateStudent(studentDetail.getStudent());
 
-        for (StudentsCourses studentsCourse : studentDetail.getStudentsCourses()) {
-            studentsCourse.setStudentId(studentDetail.getStudent().getId());
-            repository.updateStudentsCourses(studentsCourse);
+        for (StudentCourse studentCourse : studentDetail.getStudentCourseList()) {
+            studentCourse.setStudentId(studentDetail.getStudent().getId());
+            repository.updateStudentCourse(studentCourse);
         }
     }
 }
