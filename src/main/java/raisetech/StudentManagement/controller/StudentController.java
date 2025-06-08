@@ -1,19 +1,25 @@
 package raisetech.StudentManagement.controller;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.exception.TestException;
 import raisetech.StudentManagement.service.StudentService;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Validated
 @RestController
 public class StudentController {
 
@@ -40,8 +46,8 @@ public class StudentController {
      * @return　受講生一覧（全件）
      */
     @GetMapping("/studentList")
-    public List<StudentDetail> getStudentList(){
-        return service.searchStudentList();
+    public List<StudentDetail> getStudentList()throws TestException{
+        throw new TestException("ERROR");/*return service.searchStudentList();*/
     }
 
     /**
@@ -52,7 +58,8 @@ public class StudentController {
      * @return　受講生情報
      */
     @GetMapping("/student/{id}")
-    public StudentDetail getStudent(@PathVariable @Size(min=1,max=4) String id) {
+    public StudentDetail getStudent(
+            @PathVariable @NotBlank@Pattern(regexp = "\\d+$") String id) {
         return service.searchStudent(id);
     }
 
@@ -78,4 +85,8 @@ public class StudentController {
         return ResponseEntity.ok("更新処理が完了しました");
     }
 
+    @ExceptionHandler(TestException.class)
+    public ResponseEntity<String> handleTestException(TestException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
