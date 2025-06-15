@@ -1,5 +1,7 @@
 package raisetech.StudentManagement.controller;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -32,22 +34,15 @@ public class StudentController {
         this.converter = converter;
     }
 
-    @GetMapping("/newStudent")
-    public String newStudent(Model model) {
-        StudentDetail studentDetail = new StudentDetail();
-        studentDetail.setStudentCourseList(Arrays.asList(new StudentCourse()));
-        model.addAttribute("studentDetail", studentDetail);
-        return "registerStudent";
-    }
-
     /**
      * 受講生一覧
      *
-     * @return　受講生一覧（全件）
+     * @return　受講生一覧検索（全件）
      */
+    @Operation(summary = "一覧検索", description = "受講生一覧検索（全件）")
     @GetMapping("/studentList")
     public List<StudentDetail> getStudentList()throws TestException{
-        throw new TestException("ERROR");/*return service.searchStudentList();*/
+        throw new TestException("表示に失敗しました");/*return service.searchStudentList();*/
     }
 
     /**
@@ -68,6 +63,7 @@ public class StudentController {
      * @param studentDetail　受講生詳細
      * @return　実行結果
      */
+    @Operation(summary = "受講生登録", description = "受講生登録")
     @PostMapping("/registerStudent")
     public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail){
         StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
