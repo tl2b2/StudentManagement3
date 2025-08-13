@@ -13,9 +13,11 @@ import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,7 +66,7 @@ class StudentServiceTest {
 
         verify(repository, times(1)).searchStudent(id);
         verify(repository, times(1)).searchStudentsCourses(id);
-        Assertions.assertEquals(expected.getStudent().getId(), actual.getStudent().getId());
+        assertEquals(expected.getStudent().getId(), actual.getStudent().getId());
     }
 
     @Test
@@ -91,6 +93,20 @@ class StudentServiceTest {
 
         verify(repository, times(1)).updateStudent(student);
         verify(repository, times(1)).updateStudentCourse(studentCourse);
+    }
+
+    @Test
+    void 受講生情報の登録＿初期化処理が機能すること(){
+        String id="1";
+        Student student = new Student();
+        student.setId(id);
+        StudentCourse studentCourse = new StudentCourse();
+
+        sut.initStudentsCourse(studentCourse, student.getId());
+
+        assertEquals(id, studentCourse.getStudentId());
+        assertEquals(LocalDateTime.now().getHour(), studentCourse.getCourseStartAt().getHour());
+        assertEquals(LocalDateTime.now().plusYears(1).getYear(), studentCourse.getCourseEndAt().getYear());
     }
 
 }
