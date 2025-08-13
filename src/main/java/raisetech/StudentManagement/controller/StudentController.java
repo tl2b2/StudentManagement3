@@ -41,8 +41,8 @@ public class StudentController {
      */
     @Operation(summary = "一覧検索", description = "受講生一覧検索（全件）")
     @GetMapping("/studentList")
-    public List<StudentDetail> getStudentList()throws TestException{
-        throw new TestException("表示に失敗しました");/*return service.searchStudentList();*/
+    public List<StudentDetail> getStudentList(){
+        return service.searchStudentList();
     }
 
     /**
@@ -65,7 +65,8 @@ public class StudentController {
      */
     @Operation(summary = "受講生登録", description = "受講生登録")
     @PostMapping("/registerStudent")
-    public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail){
+    public ResponseEntity<StudentDetail> registerStudent(
+            @RequestBody StudentDetail studentDetail){
         StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
         return ResponseEntity.ok(responseStudentDetail);
        }
