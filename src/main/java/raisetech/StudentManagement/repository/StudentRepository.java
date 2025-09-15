@@ -6,12 +6,14 @@ import raisetech.StudentManagement.data.Student;
 
 import java.util.List;
 
+
 /**
  * 受講生テーブルと受講生コース情報テーブルと紐づくRepository
  *
  */
 @Mapper
 public interface StudentRepository {
+    Student findById(String id);
 
 
     /**
