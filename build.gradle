@@ -44,11 +44,19 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	//mybatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+
+
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	testImplementation 'com.h2database:h2:2.2.224'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+tasks.withType(Test) {
+	systemProperty "file.encoding", "UTF-8"
 }

@@ -6,6 +6,11 @@
         SELECT * FROM students WHERE isDeleted = false
     </select>
 
+    <select id="findById" parameterType="java.lang.String" resultType="raisetech.StudentManagement.data.Student">
+        SELECT * FROM students WHERE id = #{id}
+    </select>
+
+
     <!-- 受講生検索 -->
     <select id="searchStudent" resultType="raisetech.StudentManagement.data.Student">
         SELECT * FROM students WHERE id = #{id}
