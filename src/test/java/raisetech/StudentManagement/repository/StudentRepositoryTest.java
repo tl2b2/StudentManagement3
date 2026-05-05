@@ -98,4 +98,15 @@ class StudentRepositoryTest {
         assertThat(updated.getNickname()).isEqualTo("エナコウ");
         assertThat(updated.getRemark()).isEqualTo("Remark更新");
     }
+
+    @Test
+    void 受講生情報をデータから検索できること(){
+      List<Student> actual = sut.findByArea("東京");
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.get(0).getArea()).isEqualTo("東京");
+    }
+
+
+
+
 }

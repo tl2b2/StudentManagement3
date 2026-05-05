@@ -10,11 +10,32 @@
         SELECT * FROM students WHERE id = #{id}
     </select>
 
+    <select id="findByName" parameterType="string" resultType="raisetech.StudentManagement.data.Student">
+        SELECT * FROM students WHERE name = #{name} AND isDeleted = false
+    </select>
+
+    <select id="findByEmail" parameterType="string" resultType="raisetech.StudentManagement.data.Student">
+        SELECT * FROM students WHERE email = #{email} AND isDeleted = false
+    </select>
+
+    <select id="findByArea" parameterType="string" resultType="raisetech.StudentManagement.data.Student">
+        SELECT * FROM students WHERE area = #{area} AND isDeleted = false
+    </select>
+
+    <select id="findByAgeGreaterThan" parameterType="int" resultType="raisetech.StudentManagement.data.Student">
+        SELECT * FROM students WHERE age = #{age} AND isDeleted = false
+    </select>
+
+    <select id="findBySex" parameterType="string" resultType="raisetech.StudentManagement.data.Student">
+        SELECT * FROM students WHERE sex = #{sex} AND isDeleted = false
+    </select>
+
 
     <!-- 受講生検索 -->
     <select id="searchStudent" resultType="raisetech.StudentManagement.data.Student">
         SELECT * FROM students WHERE id = #{id}
     </select>
+
 
     <!-- 受講生コース情報全件検索 -->
     <select id="searchStudentCourseList" resultType="raisetech.StudentManagement.data.StudentCourse">
