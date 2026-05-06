@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class StudentService {
 
-    private StudentRepository repository;
+    private final StudentRepository repository;
     private StudentDetail student;
     private StudentConverter converter;
 
@@ -107,4 +107,16 @@ public class StudentService {
             repository.updateStudentCourse(studentCourse);
         }
     }
+
+    public List<StudentDetail> findByName(String name) {
+        List<Student> students = repository.findByName(name);
+
+        return students.stream().map(student -> {
+            StudentDetail detail = new StudentDetail();
+            detail.setStudent(student);
+            detail.setStudentCourseList(repository.searchStudentsCourses(student.getId()));
+            return detail;
+        }).toList();
+    }
+
 }

@@ -77,4 +77,15 @@ public interface StudentRepository {
 
     void updateStudentCourse(StudentCourse studentCourse);
 
+
+
+    List<Student> findByName(String name);
+
+    Student findByEmail(String email);
+
+    List<Student> findByArea(String area);
+
+    List<Student> findByAgeGreaterThan(int age);
+
+    List<Student> findBySex(String sex);
 }
